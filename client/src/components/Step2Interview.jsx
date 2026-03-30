@@ -277,7 +277,7 @@ function Step2Interview({ interviewData, onFinish }) {
     setIsMicOn(false)
 
     try {
-      const result = await axios.post(ServerUrl + "/api/interview/finish", {
+      const result = await axios.post(serverUrl + "/api/interview/finish", {
         interviewId
       }, { withCredentials: true })
 
@@ -293,7 +293,7 @@ function Step2Interview({ interviewData, onFinish }) {
     if (!currentQuestion) return;
 
     if (timeLeft === 0 && !isSubmitting && !feedback) {
-      handleSubmit();
+      submitAnswer()
     }
   }, [timeLeft]);
 
