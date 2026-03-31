@@ -188,7 +188,7 @@ function Step3Report({ report }) {
             </p>
           </div>
         </div>
-        <button onClick={downloadPDF} className='bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base text-nowrap'>
+        <button onClick={downloadPDF} className='bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl shadow-md transition-all duration-300 font-semibold text-sm sm:text-base text-nowrap p-4 '>
           Download PDF
         </button>
       </div>
