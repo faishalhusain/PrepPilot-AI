@@ -10,12 +10,13 @@ import InterviewPage from './pages/InterviewPage'
 import InterviewHistory from './pages/interviewHistory'
 import Pricing from './pages/pricing'
 import InterviewReport from './pages/InterviewReport'
-
+import Profile from './pages/Profile'   // ← NEW
 
 export const serverUrl = "http://localhost:8000"
 
 const App = () => {
   const dispatch = useDispatch()
+
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -29,14 +30,16 @@ const App = () => {
     }
     getUser()
   }, [dispatch])
+
   return (
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/auth' element={<Auth />} />
       <Route path='/interview' element={<InterviewPage />} />
-      <Route path='/history' element={<InterviewHistory />}/>
+      <Route path='/history' element={<InterviewHistory />} />
       <Route path='/pricing' element={<Pricing />} />
-      <Route path='/report/:id' element={<InterviewReport/>} />
+      <Route path='/report/:id' element={<InterviewReport />} />
+      <Route path='/profile' element={<Profile />} />   {/* ← NEW */}
     </Routes>
   )
 }

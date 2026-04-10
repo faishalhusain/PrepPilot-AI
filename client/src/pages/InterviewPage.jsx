@@ -1,5 +1,6 @@
+// InterviewPage.jsx
 import React, { useState } from 'react'
-import Step1SetUp from '../components/Step1Setup';
+import Step1SetUp from '../components/Step1SetUp';
 import Step2Interview from '../components/Step2Interview';
 import Step3Report from '../components/Step3Report';
 
@@ -8,14 +9,13 @@ function InterviewPage() {
     const [interviewData, setInterviewData] = useState(null)
 
     return (
-        <div className='min-h-screen bg-gray-50'>
+        <div style={{ minHeight: '100vh', background: '#06060a' }}>
             {step === 1 && (
                 <Step1SetUp onStart={(data) => {
                     setInterviewData(data);
                     setStep(2)
                 }} />
             )}
-
             {step === 2 && (
                 <Step2Interview interviewData={interviewData}
                     onFinish={(report) => {
@@ -24,7 +24,6 @@ function InterviewPage() {
                     }}
                 />
             )}
-
             {step === 3 && (
                 <Step3Report report={interviewData} />
             )}

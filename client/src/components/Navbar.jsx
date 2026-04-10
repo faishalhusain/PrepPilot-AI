@@ -1,8 +1,8 @@
-import React from 'react'
-import { motion } from "framer-motion";
+import React, { useEffect } from 'react'
+import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from 'react-redux'
-import { SiImmich } from "react-icons/si";
-import { BsCoin } from "react-icons/bs";
+import { GiTargetShot } from "react-icons/gi";
+import { BsCoin, BsPerson } from "react-icons/bs";
 import { FaUserAstronaut } from "react-icons/fa";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,96 +21,251 @@ const Navbar = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+  // Close popups on outside click
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowCreditPopup(false)
+      setShowUserPopup(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const handleLogout = async () => {
-  try {
-    await axios.get(serverUrl + "/api/auth/logout", {
-      withCredentials: true,
-    });
+    try {
+      await axios.get(serverUrl + "/api/auth/logout", { withCredentials: true });
+      dispatch(setUserData(null));
+      setShowCreditPopup(false);
+      setShowUserPopup(false);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    dispatch(setUserData(null));
-    setShowCreditPopup(false);
-    setShowUserPopup(false);
-    navigate("/");
-
-  } catch (error) {
-    console.log(error);
-  }
-};
-
+  const accentColor = userData?.avatarColor || '#4ade80'
 
   return (
-    <div className='bg-[#f3f3f3] flex justify-center px-4 pt-6'>
-      <motion.div
-        initial={{ opacity: 0, y: -40 }}
+    <div className='flex justify-center px-4 pt-6 relative z-50'>
+      <motion.nav
+        initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className='w-full max-w-6xl bg-white rounded-[24px] shadow-sm border border-gray-200 px-8 py-4 flex justify-between items-center relative'
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className='w-full max-w-6xl'
+        style={{
+          background: 'rgba(10, 10, 15, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderRadius: '20px',
+          border: '1px solid rgba(255,255,255,0.08)',
+          padding: '14px 28px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
+          position: 'relative',
+        }}
       >
+        {/* Top glow line */}
+        <div style={{
+          position: 'absolute', top: 0, left: '10%', right: '10%', height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(74,222,128,0.4), transparent)',
+          borderRadius: '50%'
+        }} />
+
         {/* Logo */}
-        <div className='flex items-center gap-3 cursor-pointer'>
-          <div className='bg-black text-white p-2 rounded-lg'>
-            <SiImmich size={18} />
+        <motion.div
+          className='flex items-center gap-3 cursor-pointer'
+          whileHover={{ scale: 1.02 }}
+          onClick={() => navigate('/')}
+        >
+          <div style={{
+            background: 'linear-gradient(135deg, #4ade80, #22c55e)',
+            padding: '8px', borderRadius: '10px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 0 16px rgba(74,222,128,0.35)'
+          }}>
+            <GiTargetShot size={18} color="#0a0a0f" />
           </div>
-          <h1 className='font-semibold hidden md:block text-lg'>
-            PrepPilot-AI
-          </h1>
+          <span style={{
+            fontFamily: '"Syne", sans-serif',
+            fontWeight: 700, fontSize: '17px', color: '#fff', letterSpacing: '-0.3px'
+          }} className='hidden md:block'>
+            PrepPilot<span style={{ color: '#4ade80' }}>-AI</span>
+          </span>
+        </motion.div>
+
+        {/* Nav links */}
+        <div className='hidden md:flex items-center gap-1'>
+          {['Home', 'History', 'Pricing'].map((link) => (
+            <motion.button
+              key={link}
+              whileHover={{ backgroundColor: 'rgba(255,255,255,0.07)' }}
+              onClick={() => navigate(link === 'Home' ? '/' : `/${link.toLowerCase()}`)}
+              style={{
+                color: 'rgba(255,255,255,0.6)', padding: '6px 14px',
+                borderRadius: '10px', fontSize: '14px', fontWeight: 500,
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                transition: 'all 0.2s', fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              {link}
+            </motion.button>
+          ))}
         </div>
 
         {/* Right Side */}
-        <div className='flex items-center gap-6 relative'>
-          
+        <div className='flex items-center gap-3'>
+
           {/* Credits */}
-          <div className='relative'>
-            <button  onClick={()=>{
-              if(!userData){
-                setShowAuth(true)
-                return
-              }
-            setShowCreditPopup(!showCreditPopup);
-            setShowUserPopup(false)
+          <div className='relative' onMouseDown={(e) => e.stopPropagation()}>
+            <motion.button
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
+              onClick={() => {
+                if (!userData) { setShowAuth(true); return; }
+                setShowCreditPopup(!showCreditPopup);
+                setShowUserPopup(false);
+              }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '7px',
+                background: 'rgba(74,222,128,0.12)',
+                border: '1px solid rgba(74,222,128,0.25)',
+                borderRadius: '50px', padding: '7px 16px',
+                color: '#4ade80', fontSize: '14px', fontWeight: 600,
+                cursor: 'pointer', fontFamily: '"DM Sans", sans-serif',
+              }}
+            >
+              <BsCoin size={16} />
+              {userData?.credits || 0}
+            </motion.button>
 
-            }}  className='cursor-pointer flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition'>
-            <BsCoin size={20} />
-            {userData?.credits || 0}
-          </button>
-          {showCreditPopup && (
-            <div className='absolute right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-2xl p-5 z-50'>
-                <p className='text-sm text-gray-600 mb-4'>Need More credits to continue Interviews?</p>
-                <button onClick={()=>navigate("/pricing")} className='w-full bg-black text-white py-2 rounded-lg text-sm'>Buy More Credits</button>
-            </div>
-          ) }
+            <AnimatePresence>
+              {showCreditPopup && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  style={{
+                    position: 'absolute', right: '-30px', top: 'calc(100% + 12px)',
+                    width: '240px', background: 'rgba(15,15,20,0.97)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '16px', padding: '18px', zIndex: 100,
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <BsCoin size={20} color="#4ade80" />
+                    <span style={{ color: '#fff', fontWeight: 600, fontSize: '15px' }}>{userData?.credits || 0} Credits</span>
+                  </div>
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '13px', marginBottom: '14px', lineHeight: 1.5 }}>
+                    Need more credits to continue interviews?
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate("/pricing")}
+                    style={{
+                      width: '100%', background: 'linear-gradient(135deg, #4ade80, #22c55e)',
+                      color: '#0a0a0f', border: 'none', borderRadius: '10px',
+                      padding: '9px', fontWeight: 700, fontSize: '13px', cursor: 'pointer',
+                    }}
+                  >
+                    Buy More Credits
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-
 
           {/* Avatar */}
-          <div className='relative'>
-            <button onClick={()=>{
-              if(!userData){
-                setShowAuth(true)
-                return
-              }
+          <div className='relative' onMouseDown={(e) => e.stopPropagation()}>
+            <motion.button
+              whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                if (!userData) { setShowAuth(true); return; }
                 setShowUserPopup(!showUserPopup);
-                setShowCreditPopup(false)
-            }} className='cursor-pointer w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold'>
-            {userData?.name
-              ? userData.name.slice(0, 1).toUpperCase()
-              : <FaUserAstronaut size={16} />}
-          </button>
-          {showUserPopup && (
-            <div className='absolute right-0 mt-3 w-48 bg-white shadow-xl border border-gray-200 rounded-xl p-4 z-50'>
-                <p className='text-md text-blue-500 font-medium mb-1'>{userData?.name}</p>
-                <button onClick={()=>navigate("/history")} className='w-full text-sm text-left py-2 hover:text-black text-gray-600'>Interview History</button>
-                <button onClick={handleLogout} className='w-full text-left text-sm py-2 flex items-center gap-2 text-red-500'>
-                    <TbLogout2 size={16}/>
-                    Logout</button>
-            </div>
-          )}
+                setShowCreditPopup(false);
+              }}
+              style={{
+                width: '38px', height: '38px',
+                background: `${accentColor}20`,
+                border: `2px solid ${accentColor}50`,
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: accentColor, fontWeight: 700, fontSize: '15px',
+                cursor: 'pointer',
+                boxShadow: `0 0 12px ${accentColor}25`,
+                transition: 'all 0.3s'
+              }}
+            >
+              {userData?.name ? userData.name.slice(0, 1).toUpperCase() : <FaUserAstronaut size={16} />}
+            </motion.button>
+
+            <AnimatePresence>
+              {showUserPopup && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  style={{
+                    position: 'absolute', right: 0, top: 'calc(100% + 12px)',
+                    width: '210px', background: 'rgba(15,15,20,0.97)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '16px', padding: '14px',
+                    zIndex: 100, boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                  }}
+                >
+                  {/* User info header */}
+                  <div style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                    <p style={{ color: accentColor, fontWeight: 600, fontSize: '14px', margin: '0 0 2px' }}>{userData?.name}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{userData?.email}</p>
+                  </div>
+
+                  {/* Menu items */}
+                  {[
+                    { icon: <BsPerson size={14} />, label: 'My Profile', path: '/profile' },
+                    { icon: <BsCoin size={14} />, label: 'Interview History', path: '/history' },
+                  ].map((item) => (
+                    <button
+                      key={item.label}
+                      onClick={() => { navigate(item.path); setShowUserPopup(false); }}
+                      style={{
+                        width: '100%', textAlign: 'left', padding: '9px 6px',
+                        color: 'rgba(255,255,255,0.6)', fontSize: '13px',
+                        background: 'none', border: 'none', cursor: 'pointer',
+                        borderRadius: '8px', fontFamily: '"DM Sans", sans-serif',
+                        display: 'flex', alignItems: 'center', gap: '8px',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}
+                    >
+                      {item.icon} {item.label}
+                    </button>
+                  ))}
+
+                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)', margin: '6px 0' }} />
+
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      width: '100%', textAlign: 'left', padding: '9px 6px',
+                      color: '#f87171', fontSize: '13px', background: 'none',
+                      border: 'none', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                      borderRadius: '8px', fontFamily: '"DM Sans", sans-serif',
+                    }}
+                  >
+                    <TbLogout2 size={15} /> Logout
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-
         </div>
-      </motion.div>
-          {showAuth ? <AuthModel onClose={() => setShowAuth(false)} /> : null}
+      </motion.nav>
 
+      {showAuth ? <AuthModel onClose={() => setShowAuth(false)} /> : null}
     </div>
   )
 }
