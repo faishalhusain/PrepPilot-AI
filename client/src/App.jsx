@@ -12,7 +12,7 @@ import Pricing from './pages/pricing'
 import InterviewReport from './pages/InterviewReport'
 import Profile from './pages/Profile'   // ← NEW
 
-export const serverUrl = "http://localhost:8000"
+export const serverUrl = "https://preppilot-ai-8yzq.onrender.com"
 
 const App = () => {
   const dispatch = useDispatch()
