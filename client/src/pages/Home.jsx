@@ -331,7 +331,7 @@ const Home = () => {
             <h2 className='section-title'>Advanced AI <span style={{ color: '#4ade80' }}>Features</span></h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(480px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(480px, 100%), 1fr))', gap: '20px' }}>
             {[
               { image: evalImg, icon: <BsBarChart size={20} />, title: 'AI Answer Evaluation', desc: 'Scores communication, technical accuracy, and confidence in real-time.' },
               { image: resumeImg, icon: <BsFileEarmarkText size={20} />, title: 'Resume-Based Interview', desc: 'Project-specific questions tailored directly from your uploaded resume.' },
@@ -356,7 +356,7 @@ const Home = () => {
                 }}>
                   <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', objectFit: 'contain' }} />
                 </div>
-                <div style={{ flex: 1, minWidth: '200px' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div className='pp-icon-box' style={{ marginBottom: '14px' }}>{item.icon}</div>
                   <h3 style={{ color: '#fff', fontFamily: '"Syne", sans-serif', fontWeight: 700, fontSize: '18px', marginBottom: '8px' }}>{item.title}</h3>
                   <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '14px', lineHeight: 1.7, fontFamily: '"DM Sans", sans-serif' }}>{item.desc}</p>
@@ -376,7 +376,7 @@ const Home = () => {
             <h2 className='section-title'>Multiple Interview <span style={{ color: '#4ade80' }}>Modes</span></h2>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(460px, 100%), 1fr))', gap: '20px' }}>
             {[
               { img: hrImg, title: 'HR Interview Mode', desc: 'Behavioral and communication-based evaluation for people-focused roles.', badge: 'Popular' },
               { img: techImg, title: 'Technical Mode', desc: 'Deep technical questioning based on your selected role and stack.', badge: 'Advanced' },
